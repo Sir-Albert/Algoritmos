@@ -18,6 +18,7 @@ typedef struct nodo
 typedef struct
 {
 	Nodo *inicio;
+	Nodo *fin;
 	int cantidad;
 }Lista;
 
@@ -28,10 +29,9 @@ int vacia(Lista lista);
 
 
 void quickSort_iterativo(int *arreglo,int inicio,int fin);
+void quickSort(int *arreglo,int inicio,int fin);
 
-void quickSort(int *arreglo,int low,int high);
-
-int partition(int *arreglo,int low,int high);
+int partition(int *arreglo,int inicio,int fin);
 void intercambiar(int *arreglo,int a,int b);
 
 void imprimir(int *arreglo,int longitud);
@@ -62,20 +62,21 @@ int main(void)
 
 void imprimir(int *arreglo,int longitud)
 {
-	for(int i = 0; i < longitud ; i++)
+    int i;
+	for(i = 0; i < longitud ; i++)
 	{
 		printf(" %d",arreglo[i]);
 	}
 }
 
-void quickSort(int *arreglo,int low,int high)
+void quickSort(int *arreglo,int inicio,int fin)
 {
 	int pivote;
-	if( high > low )
+	if( fin > inicio )
 	{		
-		pivote = partition(arreglo,low,high);
-		quickSort(arreglo,low,pivote-1);
-		quickSort(arreglo,pivote+1,high);
+		pivote = partition(arreglo,inicio,fin);
+		quickSort(arreglo,inicio,pivote-1);
+		quickSort(arreglo,pivote+1,fin);
 	}
 }
 
@@ -105,17 +106,17 @@ void quickSort_iterativo(int *arreglo,int inicio,int fin)
 	}
 }
 
-int partition(int *arreglo,int low,int high)
+int partition(int *arreglo,int inicio,int fin)
 {
 	int izquierda,derecha,pivote;
 	//SE SELECCIONA EL VALOR DEL PIVOTE
 	//ARBRITARIAMENTE
-	pivote = arreglo[low];
+	pivote = arreglo[inicio];
 	//SE UTILIZAN 2 VARIABLES AUXILIARES
 	//PARA RECORRER LOS EXTREMOS Y COMPARAR
 	//DE AFUERA HACIA ADENTRO
-	izquierda = low;
-	derecha = high;
+	izquierda = inicio;
+	derecha = fin;
 	//ESTE CICLO COLOCA EN LA MITAD IZQUIERDA
 	//LOS VALORES MENORES AL PIVOTE
 	//Y EN LA MITAD DERECHA LOS MAYORES AL PIVOTE
@@ -135,7 +136,7 @@ int partition(int *arreglo,int low,int high)
 	//AQUI SE COLOCA EL PIVOTE EN LA POSICION DE LA DERECHA
 	//SIENDO EL CENTRO DE LAS DOS MITADES
 	//DERECHA ES LA POSICION FINAL PARA EL PIVOTE
-	arreglo[low] = arreglo[derecha];
+	arreglo[inicio] = arreglo[derecha];
 	arreglo[derecha] = pivote;
 	return derecha;	
 }
@@ -151,8 +152,7 @@ void intercambiar(int *arreglo,int a,int b)
 Nodo* crearNodo(Extremos extremos)
 {
 	Nodo *nuevo = calloc(1,sizeof(Nodo));
-	nuevo->extremos.inicio = extremos.inicio;
-	nuevo->extremos.fin = extremos.fin;
+	nuevo->extremos = extremos;
 	return nuevo;
 }
 
@@ -160,30 +160,27 @@ void insertar(Lista *lista,int inicio,int fin)
 {
 	Extremos extremos = (Extremos){inicio,fin};
 	if( vacia(*lista) )
-		lista->inicio = crearNodo(extremos);
+		lista->inicio = lista->fin = crearNodo(extremos);
 	else
-	{
-		Nodo *p = lista->inicio;
-		while( p->sig != NULL )
-			p = p->sig;
-		p->sig = crearNodo(extremos);
-	}
+        lista->fin = lista->fin->sig = crearNodo(extremos);
 	lista->cantidad++;
 }
 
 Extremos quitar(Lista *lista)
 {
-	Extremos extremos;
 	Nodo *tmp;
+	Extremos extremos;
 	tmp = lista->inicio;
 	lista->inicio = tmp->sig;
+	lista->cantidad--;
+    if(!lista->inicio)
+        lista->fin = NULL;
 	extremos = tmp->extremos;
 	free(tmp);
-	lista->cantidad--;
 	return extremos;	
 }
 
 int vacia(Lista lista)
 {
-	return lista.inicio == NULL && lista.cantidad==0;
+	return lista.inicio == NULL && lista.inicio == lista.fin && lista.cantidad==0;
 }
