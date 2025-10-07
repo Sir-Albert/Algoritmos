@@ -29,6 +29,8 @@ int vacia(Lista lista);
 
 void quickSort_iterativo(int *arreglo,int inicio,int fin);
 
+void quickSortArreglosDinamicos(int *arreglo,int inicio,int fin);
+
 void quickSort(int *arreglo,int low,int high);
 
 int partition(int *arreglo,int low,int high);
@@ -43,6 +45,15 @@ int main(void)
 	
 	printf("\n ARREGLO_1: ");
 	imprimir(arreglo_1,LONGITUD);
+	printf("\n RESULTADO DE QUICKSORT ITERATIVO");
+	quickSortArreglosDinamicos(arreglo_1,0,9);
+	printf("\n ARREGLO_1: ");
+	imprimir(arreglo_1,LONGITUD);
+	
+	
+	/*
+	printf("\n ARREGLO_1: ");
+	imprimir(arreglo_1,LONGITUD);
 	printf("\n RESULTADO DE QUICKSORT RECURSIVO");
 	quickSort(arreglo_1,0,9);
 	printf("\n ARREGLO_1: ");
@@ -55,6 +66,7 @@ int main(void)
 	printf("\n RESULTADO DE QUICKSORT ITERATIVO");
 	printf("\n ARREGLO_2: ");
 	imprimir(arreglo_2,LONGITUD);
+	*/
 
 	return 0;
 }
@@ -66,6 +78,43 @@ void imprimir(int *arreglo,int longitud)
 	{
 		printf(" %d",arreglo[i]);
 	}
+}
+
+
+void quickSortArreglosDinamicos(int *arreglo,int inicio,int fin)
+{
+	int pivote,i;
+	int numParticiones = 1;
+	int *aux;
+	int *inicios = calloc(numParticiones,sizeof(int));
+	int *finales = calloc(numParticiones,sizeof(int));
+	inicios[0] = inicio;
+	finales[0] = fin;
+	for( i = 0; i < numParticiones; i++)
+	{
+		if(inicios[i]<finales[i])
+		{
+			pivote = partition(arreglo,inicios[i],finales[i]);	
+			//AUMENTA PARA REGISTRAR PARTICIONES		
+			aux = NULL;
+			while(!aux)
+				aux = realloc(inicios,sizeof(int) * (numParticiones+2));
+			inicios = aux;	
+			aux = NULL;
+			while(!aux)
+				aux = realloc(finales,sizeof(int) * (numParticiones+2));
+			finales = aux;
+			//IZQUIERDA
+			inicios[numParticiones] = inicios[i];
+			finales[numParticiones] = pivote-1;		
+			//DERECHA
+			inicios[numParticiones+1] = pivote+1;
+			finales[numParticiones+1] = finales[i];
+			numParticiones+=2;		
+		}
+	}
+	free(inicios);
+	free(finales);	
 }
 
 void quickSort(int *arreglo,int low,int high)
