@@ -43,6 +43,7 @@ int main(void)
 	int arreglo_1[LONGITUD] = {6,4,8,7,9,3,2,1,10,5};
 	int arreglo_2[LONGITUD] = {6,4,8,7,9,3,2,1,10,5};
 	
+	printf("\n HOLA MUNDO");
 	printf("\n ARREGLO_1: ");
 	imprimir(arreglo_1,LONGITUD);
 	printf("\n RESULTADO DE QUICKSORT ITERATIVO");
